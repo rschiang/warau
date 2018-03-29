@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>Comment.qml</file>
         <file>format.js</file>
+        <file>Timeline.qml</file>
     </qresource>
 </RCC>

@@ -57,11 +57,17 @@ Text {
             timer.start()
         }
 
+        timeline.register(self)
         self.visible = true
     }
 
     function hideAndDestroy() {
         self.visible = false
+        timeline.unregister(self)
         self.destroy()
+    }
+
+    function overlaps(other) {
+        return !(self.y > (other.y + other.height) || other.y > (self.y + self.height))
     }
 }

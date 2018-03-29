@@ -25,6 +25,10 @@ Window {
     // Components
     // ==========
 
+    Timeline {
+        id: timeline
+    }
+
     Component {
         id: factory
         Comment {}
@@ -48,6 +52,8 @@ Window {
         /* TODO: use Application.screen in Qt 5.9 */
         window.width = Screen.desktopAvailableWidth
         window.height = Screen.desktopAvailableHeight
+        timeline.minY = 12
+        timeline.maxY = window.height - 12
     }
 
     function postComment(fmt, text) {
