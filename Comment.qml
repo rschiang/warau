@@ -10,8 +10,8 @@ Text {
 
     text: "OwO"
     color: "white"
-    font.pointSize: self.textSize === "large" ? 52 :
-                    self.textSize === "small" ? 28 : 36
+    font.pointSize: self.size === "large" ? 52 :
+                    self.size === "small" ? 28 : 36
 
     font.weight: Font.DemiBold
     renderType: Text.NativeRendering
@@ -24,28 +24,44 @@ Text {
         radius: 4
     }
 
+    Timer {
+        id: timer
+        interval: 6000
+        onTriggered: self.hideAndDestroy()
+    }
+
     NumberAnimation {
         id: animation
         target: self
         property: "x"
         duration: 8000
-
-        onStopped: {
-            self.visible = false
-            self.destroy()
-        }
+        onStopped: self.hideAndDestroy()
     }
 
     // ==============
     // Public members
     // ==============
 
-    property string textSize: "medium"
+    // property alias text
+    // property alias color
+    property string size: "medium"
+    property string position: "scroll"
 
     function show() {
-        self.x = parent.width
+        if (self.position === "scroll") {
+            self.x = parent.width
+            animation.to = -self.paintedWidth
+            animation.start()
+        } else {
+            self.anchors.horizontalCenter = parent.horizontalCenter
+            timer.start()
+        }
+
         self.visible = true
-        animation.to = -self.paintedWidth
-        animation.start()
+    }
+
+    function hideAndDestroy() {
+        self.visible = false
+        self.destroy()
     }
 }

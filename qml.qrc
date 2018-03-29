@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>Comment.qml</file>
+        <file>format.js</file>
     </qresource>
 </RCC>
