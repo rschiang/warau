@@ -29,7 +29,6 @@ Text {
         target: self
         property: "x"
         duration: 8000
-        //easing.type: Easing.InSine
 
         onStopped: {
             self.visible = false
