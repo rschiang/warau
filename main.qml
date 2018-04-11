@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Window 2.3
+import Qt.labs.platform 1.0
 import "format.js" as Format
 
 Window {
@@ -20,6 +21,7 @@ Window {
     // ==============
 
     onVisibilityChanged: resizeToScreen()
+    onScreenChanged: resizeToScreen()
 
     // ==========
     // Components
@@ -34,13 +36,26 @@ Window {
         Comment {}
     }
 
-    Timer {
-        interval: 2000
-        repeat: true
-        running: true
-        property int count: 0
-        onTriggered: {
-            postComment(Format.random(), "我能吞下玻璃而不傷身體wwwww")
+    MenuBar {
+        id: menuBar
+        window: window
+
+        Menu {
+            title: qsTr("Application")
+
+            MenuItem {
+                text: qsTr("Preferences")
+                shortcut: StandardKey.Preferences
+                role: MenuItem.PreferencesRole
+                onTriggered: console.log("Preferences!")
+            }
+
+            MenuItem {
+                text: qsTr("Generate Comment")
+                shortcut: StandardKey.New
+                role: MenuItem.ApplicationSpecificRole
+                onTriggered: postComment(Format.random(), qsTr("I can eat glass and it doesn't hurt me."))
+            }
         }
     }
 
@@ -50,6 +65,8 @@ Window {
 
     function resizeToScreen() {
         /* TODO: use Application.screen in Qt 5.9 */
+        window.x = 0
+        window.y = 0
         window.width = Screen.desktopAvailableWidth
         window.height = Screen.desktopAvailableHeight
         timeline.minY = 12
