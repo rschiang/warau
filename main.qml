@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Window 2.3
 import Qt.labs.platform 1.0
+import Qt.WebSockets 1.1
 import "format.js" as Format
 
 Window {
@@ -36,6 +37,12 @@ Window {
         Comment {}
     }
 
+    WebSocketServer {
+        id: server
+        name: "warau"
+        listen: true
+    }
+
     MenuBar {
         id: menuBar
         window: window
@@ -47,7 +54,7 @@ Window {
                 text: qsTr("Preferences")
                 shortcut: StandardKey.Preferences
                 role: MenuItem.PreferencesRole
-                onTriggered: console.log("Preferences!")
+                onTriggered: preferencesWindow.show()
             }
 
             MenuItem {
@@ -57,6 +64,11 @@ Window {
                 onTriggered: postComment(Format.random(), qsTr("I can eat glass and it doesn't hurt me."))
             }
         }
+    }
+
+    PreferencesWindow {
+        id: preferencesWindow
+        socketUrl: server.url
     }
 
     // =========

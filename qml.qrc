@@ -4,5 +4,6 @@
         <file>Comment.qml</file>
         <file>format.js</file>
         <file>Timeline.qml</file>
+        <file>PreferencesWindow.qml</file>
     </qresource>
 </RCC>
