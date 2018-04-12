@@ -41,6 +41,32 @@ Window {
         id: server
         name: "warau"
         listen: true
+
+        onClientConnected: {
+            webSocket.onTextMessageReceived.connect(onClientMessageReceived)
+            preferencesWindow.statusText = qsTr("Connected")
+            preferencesWindow.hide()
+        }
+
+        function onClientMessageReceived(message) {
+            var fmt = ''
+            var text = message.trim()
+
+            // Match formatting string if available
+            var pattern = /^#\[([a-z ]+)\]\s*/i
+            var match = pattern.exec(text)
+            if (match) {
+                fmt = match[1]
+                text = text.substring(match[0].length)
+            }
+
+            postComment(fmt, text)
+        }
+
+        function onClientDisconnected() {
+            preferencesWindow.statusText = qsTr("Waiting for Connection")
+            preferencesWindow.show()
+        }
     }
 
     MenuBar {
