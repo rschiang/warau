@@ -13,6 +13,7 @@ Text {
     font.pointSize: self.size === "large" ? 52 :
                     self.size === "small" ? 28 : 36
 
+    textFormat: Text.PlainText
     font.weight: Font.DemiBold
     renderType: Text.NativeRendering
     visible: false

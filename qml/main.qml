@@ -44,6 +44,7 @@ Window {
 
         onClientConnected: {
             webSocket.onTextMessageReceived.connect(onClientMessageReceived)
+            webSocket.onStatusChanged.connect(onClientStatusChanged)
             preferencesWindow.statusText = qsTr("Connected")
             preferencesWindow.hide()
         }
@@ -63,9 +64,11 @@ Window {
             postComment(fmt, text)
         }
 
-        function onClientDisconnected() {
-            preferencesWindow.statusText = qsTr("Waiting for Connection")
-            preferencesWindow.show()
+        function onClientStatusChanged(status) {
+            if (status === WebSocket.Closed) {
+                preferencesWindow.statusText = qsTr("Waiting for Connection")
+                preferencesWindow.show()
+            }
         }
     }
 

@@ -6,7 +6,13 @@ import websockets
 
 async def main(url):
     async with websockets.connect(url) as websocket:
-        await websocket.send("I can eat glass! Oof!")
+        message = 'I can eat glass! Oof!'
+        while True:
+            message = input('> ')
+            if message:
+                await websocket.send(message)
+            else:
+                break
 
 def show_help():
     print("""
