@@ -50,18 +50,25 @@ Window {
         }
 
         function onClientMessageReceived(message) {
-            var fmt = ''
+            var fmt = '', author = ''
             var text = message.trim()
 
             // Match formatting string if available
-            var pattern = /^\+\[([a-z ]+)\]\s*/i
-            var match = pattern.exec(text)
+            var formatPattern = /^\+\[([a-z ]+)\]\s*/i
+            var match = formatPattern.exec(text)
             if (match) {
                 fmt = match[1]
                 text = text.substring(match[0].length)
             }
 
-            postComment(fmt, text)
+            var authorPattern = /\s*\(@([a-z0-9\-_]+)\)$/i
+            match = authorPattern.exec(text)
+            if (match) {
+                author = match[1]
+                text = text.substring(0, text.length - match[0].length)
+            }
+
+            postComment(fmt, text, author)
         }
 
         function onClientStatusChanged(status) {
@@ -90,7 +97,7 @@ Window {
                 text: qsTr("Generate Comment")
                 shortcut: StandardKey.New
                 role: MenuItem.ApplicationSpecificRole
-                onTriggered: postComment(Format.random(), qsTr("I can eat glass and it doesn't hurt me."))
+                onTriggered: postComment(Format.random(), qsTr("I can eat glass and it doesn't hurt me."), "me")
             }
         }
     }
@@ -114,13 +121,15 @@ Window {
         timeline.maxY = window.height - 12
     }
 
-    function postComment(fmt, text) {
+    function postComment(fmt, text, author) {
         var rows = Math.floor(window.height / 36)
         var row = Math.floor(Math.random() * rows) * 36
 
         var format = Format.parse(fmt)
         format.text = text
         format.y = row
+
+        if (author) format.author = author
 
         var ele = factory.createObject(window, format)
         ele.show()

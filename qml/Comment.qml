@@ -17,11 +17,29 @@ Text {
     font.weight: Font.DemiBold
     visible: false
 
+    clip: false
     layer.enabled: true
     layer.effect: DropShadow {
         horizontalOffset: 0
         verticalOffset: 2
         radius: 4
+    }
+
+    Text {
+        id: authorLabel
+
+        parent: self.parent
+        anchors.baseline: self.baseline
+        anchors.left: self.right
+
+        text: " - " + self.author
+        color: self.color
+        opacity: .54
+        font.pointSize: self.size == "small" ? 16 : 22
+
+        textFormat: Text.PlainText
+        font.weight: Font.DemiBold
+        visible: !!self.author
     }
 
     Timer {
@@ -46,6 +64,7 @@ Text {
     // property alias color
     property string size: "medium"
     property string position: "scroll"
+    property string author: ""
 
     function show() {
         if (self.position === "scroll") {

@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 import asyncio
 import json
+import re
 import slacker
 import sys
 import websockets
 
+MENTION_PATTERN = re.compile(r'<@([A-Z0-9]+)(?:\|[^>]+)?>')
+
 messages = asyncio.queues.Queue()
+users = {}
 
 async def main():
     local_url = sys.argv[1]
@@ -29,7 +33,6 @@ async def main():
         task.cancel()
 
 async def slack_client(url):
-    users = {}  # Cache user information
     async with websockets.connect(url) as websocket:
         async for message in websocket:
             event = json.loads(message)
@@ -42,17 +45,14 @@ async def slack_client(url):
                 continue
 
             # Fetch user information
-            user_id = event['user']
-            user = users.get(user_id)
-            if not user:
-                response = slack.users.info(user=user_id)
-                user = response.body['user']
-                users[user_id] = user
+            user = get_slack_user(event['user'])
+
+            # Process mentions
+            text = event['text']
+            text = MENTION_PATTERN.sub(lambda m: ('@' + get_slack_user(m[1])['name']), text)
 
             # Put message
-            print("INFO: Queue size ", messages.qsize())
-            await messages.put('{} (@{})'.format(event['text'], user['name']))
-            print("INFO: Queue size ", messages.qsize())
+            await messages.put('{} (@{})'.format(text, user['name']))
 
 async def local_client(url):
     async with websockets.connect(url) as websocket:
@@ -60,6 +60,13 @@ async def local_client(url):
             message = await messages.get()
             print("INFO: Message ", message)
             await websocket.send(message)
+
+def get_slack_user(user_id):
+    if user_id not in users:
+        response = slack.users.info(user=user_id)
+        user = response.body['user']
+        users[user_id] = user
+    return users[user_id]
 
 def show_help():
     print("""
