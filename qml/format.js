@@ -20,7 +20,7 @@ var positions = {
     bottom: "bottom", shita: "bottom"
 }
 
-var fonts = {
+var fontStyles = {
     sans: "sans", gothic: "sans",
     serif: "serif", mincho: "serif",
     cursive: "cursive"
@@ -36,8 +36,8 @@ function parse(fmt) {
             format.color = colors[i]
         else if (i in positions)
             format.position = positions[i]
-        else if (i in fonts)
-            format.font = fonts[i]
+        else if (i in fontStyles)
+            format.fontStyle = fontStyles[i]
     })
     return format
 }
@@ -50,5 +50,5 @@ function choice(obj) {
 }
 
 function random() {
-    return [choice(sizes), choice(colors), choice(positions)].join(" ")
+    return [choice(sizes), choice(colors), choice(positions), choice(fontStyles)].join(" ")
 }

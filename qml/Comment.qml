@@ -12,6 +12,9 @@ Text {
     color: "white"
     font.pointSize: self.size === "large" ? 52 :
                     self.size === "small" ? 28 : 36
+    font.family: self.fontStyle === "serif" ? "Source Han Serif TC, Palatino, Songti TC, serif" :
+                 self.fontStyle === "cursive" ? "Hannotate TC, Marker Felt, cursive" :
+                 "Pingfang TC, Source Han Sans TC, sans-serif"
 
     textFormat: Text.PlainText
     font.weight: Font.DemiBold
@@ -64,6 +67,7 @@ Text {
     // property alias color
     property string size: "medium"
     property string position: "scroll"
+    property string fontStyle: "sans"
     property string author: ""
 
     function show() {
