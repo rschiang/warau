@@ -9,7 +9,7 @@ Window {
     // Properties
     // ==========
 
-    visible: false
+    visible: true
     flags: Qt.Dialog | Qt.WindowMinimizeButtonHint
     width: 480
     height: 210

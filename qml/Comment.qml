@@ -15,7 +15,6 @@ Text {
 
     textFormat: Text.PlainText
     font.weight: Font.DemiBold
-    renderType: Text.NativeRendering
     visible: false
 
     layer.enabled: true
