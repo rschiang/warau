@@ -6,7 +6,8 @@ import slacker
 import sys
 import websockets
 
-MENTION_PATTERN = re.compile(r'<@([A-Z0-9]+)(?:\|[^>]+)?>')
+MENTION_PATTERN = re.compile(r'<@([A-Z0-9]+)(?:\|([^>]+))?>')
+CHANNEL_PATTERN = re.compile(r'<#([A-Z0-9]+)(?:\|([^>]+))?>')
 
 messages = asyncio.queues.Queue()
 users = {}
@@ -38,7 +39,7 @@ async def slack_client(url):
             event = json.loads(message)
 
             # Filter out irrelevant messages
-            print("INFO:", event['type'], event.get('subtype', '-'), event.get('text', '-'))
+            print("INFO:", event['type'], event.get('subtype', ''), event.get('text', ''))
             if event['type'] != 'message':
                 continue
             elif 'subtype' in event and event['subtype'] not in ('file_comment', 'message_replied'):
@@ -49,7 +50,8 @@ async def slack_client(url):
 
             # Process mentions
             text = event['text']
-            text = MENTION_PATTERN.sub(lambda m: ('@' + get_slack_user(m[1])['name']), text)
+            text = MENTION_PATTERN.sub(slack_user_repl, text)
+            text = CHANNEL_PATTERN.sub(slack_channel_repl, text)
 
             # Put message
             await messages.put('{} (@{})'.format(text, user['name']))
@@ -58,7 +60,6 @@ async def local_client(url):
     async with websockets.connect(url) as websocket:
         while True:
             message = await messages.get()
-            print("INFO: Message ", message)
             await websocket.send(message)
 
 def get_slack_user(user_id):
@@ -67,6 +68,12 @@ def get_slack_user(user_id):
         user = response.body['user']
         users[user_id] = user
     return users[user_id]
+
+def slack_user_repl(matchobj):
+    return '@' + (matchobj[2] or get_slack_user(matchobj[1])['name'])
+
+def slack_channel_repl(matchobj):
+    return '#' + (matchobj[2] or slack.channels.info(channel=matchobj[1]).body['name'])
 
 def show_help():
     print("""
