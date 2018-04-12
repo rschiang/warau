@@ -54,7 +54,7 @@ Window {
             var text = message.trim()
 
             // Match formatting string if available
-            var pattern = /^#\[([a-z ]+)\]\s*/i
+            var pattern = /^\+\[([a-z ]+)\]\s*/i
             var match = pattern.exec(text)
             if (match) {
                 fmt = match[1]

@@ -1,3 +1,7 @@
+# Python things
 __pycache__
 *.pyc
 env/
+
+# Config
+config.json
